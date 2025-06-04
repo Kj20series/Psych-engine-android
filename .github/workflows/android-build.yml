@@ -1,0 +1,51 @@
+name: Build Psych Engine 0.6.1 Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout empty repo
+      uses: actions/checkout@v3
+
+    - name: Clone full Psych Engine 0.6.1 source
+      run: |
+        git clone --depth=1 https://github.com/ShadowMario/FNF-PsychEngine.git source
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y openjdk-17-jdk wget unzip libglu1-mesa libsndfile1-dev libx11-dev libxext-dev libxi-dev libxrandr-dev libxinerama-dev libxcursor-dev zlib1g-dev libasound2-dev libpulse-dev
+
+    - name: Install Haxe
+      run: |
+        wget https://github.com/HaxeFoundation/haxe/releases/download/4.3.4/haxe-4.3.4-linux64.tar.gz
+        tar -xzf haxe-4.3.4-linux64.tar.gz
+        sudo cp -r haxe-4.3.4/* /usr/local/
+
+    - name: Setup Haxelib and install libs
+      run: |
+        haxelib setup ~/.haxelib
+        haxelib install lime
+        haxelib install openfl
+        haxelib install flixel
+        haxelib install flixel-addons
+        haxelib install flixel-ui
+        haxelib install hscript
+        haxelib install tjson
+        haxelib install hxcpp
+        haxelib run lime setup -y
+        haxelib run openfl setup -y
+
+    - name: Build Android APK
+      working-directory: source
+      run: lime build android -release
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: psych-engine-0.6.1-android-apk
+        path: source/export/release/android/bin/app/build/outputs/apk/release/*.apk
