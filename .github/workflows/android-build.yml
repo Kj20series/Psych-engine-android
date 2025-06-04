@@ -20,32 +20,32 @@ jobs:
         sudo apt update
         sudo apt install -y openjdk-17-jdk wget unzip libglu1-mesa libsndfile1-dev libx11-dev libxext-dev libxi-dev libxrandr-dev libxinerama-dev libxcursor-dev zlib1g-dev libasound2-dev libpulse-dev
 
-    - name: Install Haxe (dynamic folder detection)
+    - name: Install Haxe (with dynamic folder detection)
       run: |
         wget https://github.com/HaxeFoundation/haxe/releases/download/4.3.4/haxe-4.3.4-linux64.tar.gz
         tar -xzf haxe-4.3.4-linux64.tar.gz
         extracted_dir=$(tar -tzf haxe-4.3.4-linux64.tar.gz | head -1 | cut -f1 -d"/")
         cd "$extracted_dir"
         sudo cp -r * /usr/local/
-        haxe --version
+        /usr/local/bin/haxe --version
 
     - name: Setup Haxelib and install libraries
       run: |
-        haxelib setup ~/.haxelib
-        haxelib install lime
-        haxelib install openfl
-        haxelib install flixel
-        haxelib install flixel-addons
-        haxelib install flixel-ui
-        haxelib install hscript
-        haxelib install tjson
-        haxelib install hxcpp
-        haxelib run lime setup -y
-        haxelib run openfl setup -y
+        /usr/local/bin/haxelib setup ~/.haxelib
+        /usr/local/bin/haxelib install lime
+        /usr/local/bin/haxelib install openfl
+        /usr/local/bin/haxelib install flixel
+        /usr/local/bin/haxelib install flixel-addons
+        /usr/local/bin/haxelib install flixel-ui
+        /usr/local/bin/haxelib install hscript
+        /usr/local/bin/haxelib install tjson
+        /usr/local/bin/haxelib install hxcpp
+        /usr/local/bin/haxelib run lime setup -y
+        /usr/local/bin/haxelib run openfl setup -y
 
     - name: Build Android APK
       working-directory: source
-      run: lime build android -release
+      run: /usr/local/bin/lime build android -release
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
